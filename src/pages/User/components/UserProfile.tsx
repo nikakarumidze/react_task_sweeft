@@ -1,66 +1,88 @@
-import { CardMedia, Grid, Typography } from '@mui/material';
+import { CardMedia, Grid, Typography, Box } from '@mui/material';
 import { UserProfileType } from '../../../Types';
 import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const baseData = {
+  id: 0,
   name: '',
+  lastName: '',
+  prefix: '',
   title: '',
+  imageUrl: '',
   jobDescriptor: '',
   jobArea: '',
   jobType: '',
   email: '',
   ip: '',
-  company: { name: '' },
+  company: { name: '', suffix: '' },
   address: { zipCode: '', city: '', streetAddress: '', country: '', state: '' },
 };
 const ExampleGrid: React.FC = () => {
-  const {
-    name,
-    title,
-    jobDescriptor,
-    jobArea,
-    jobType,
-    email,
-    ip,
-    company: { name: companyName },
-    address: { zipCode, city, streetAddress, country, state },
-  } = baseData;
+  const [data, setData] = useState<UserProfileType>(baseData);
 
   const location = useLocation();
   //   id
   console.log(location.pathname.split('/')[2]);
   console.log(location.state);
 
+  useEffect(() => {
+    axios
+      .get<UserProfileType>(
+        `http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com${location.pathname}`
+      )
+      .then((res) => setData(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={6}>
-        <CardMedia
-          component='img'
-          alt='Example Image'
-          height='140'
-          image='/example-image.jpg'
-          title='Example Image'
-        />
-      </Grid>
-      <Grid item xs={12} sm={3}>
-        <Typography>{name}</Typography>
-        <Typography>{title}</Typography>
-        <Typography>{jobDescriptor}</Typography>
-        <Typography>{jobArea}</Typography>
-        <Typography>{jobType}</Typography>
-        <Typography>{email}</Typography>
-        <Typography>{ip}</Typography>
-      </Grid>
-      <Grid item xs={12} sm={3}>
-        <Typography>{companyName}</Typography>
-        <Typography>{zipCode}</Typography>
-        <Typography>{city}</Typography>
-        <Typography>{streetAddress}</Typography>
-        <Typography>{country}</Typography>
-        <Typography>{state}</Typography>
-        <Typography fontWeight='bold'>Bold Text</Typography>
-      </Grid>
-    </Grid>
+    <>
+      {data.name && (
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <CardMedia
+              component='img'
+              alt='User Image'
+              image={data.imageUrl}
+              title='User Image'
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Typography variant='h5' color='secondary'>
+              INFO
+            </Typography>
+            <Box sx={{ p: 2, border: '1px solid black' }}>
+              <Typography fontWeight='bold'>
+                {data.prefix + ' ' + data.name + ' ' + data.lastName}
+              </Typography>
+              <Typography fontStyle='italic' mb={2}>
+                {data.title}
+              </Typography>
+              <Typography>Email: {data.email}</Typography>
+              <Typography>IP: {data.ip}</Typography>
+              <Typography>{data.jobDescriptor}</Typography>
+              <Typography>Job Area: {data.jobArea}</Typography>
+              <Typography>Job Type: {data.jobType}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Typography variant='h5' color='secondary'>
+              ADDRESS
+            </Typography>
+            <Box sx={{ p: 2, border: '1px solid black' }}>
+              <Typography>
+                {data.company.name} {data.address.zipCode}
+              </Typography>
+              <Typography>City: {data.address.city}</Typography>
+              <Typography>Street: {data.address.streetAddress}</Typography>
+              <Typography>Country: {data.address.country}</Typography>
+              <Typography>State: {data.address.state}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      )}
+    </>
   );
 };
 

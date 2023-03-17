@@ -5,7 +5,7 @@ import User from './pages/User/User';
 
 const App: React.FC = () => {
   return (
-    <Container sx={{ pt: '32px', pb: '64px', bgColor: '#f5f5f5' }}>
+    <Container sx={{ pt: '32px', pb: '64px', bgColor: '#f5f5f5', border:'0.5px gray solid' }}>
       <Routes>
         <Route path='/' element={<Main />} />
         <Route path='/user/:id' element={<User />}/>
