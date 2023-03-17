@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, CardMedia, Grid, Typography } from '@mui/material';
 import { User } from '../Types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface userPreviewProps {
   user: User;
@@ -9,6 +9,7 @@ interface userPreviewProps {
 
 const UserPreview: React.FC<userPreviewProps> = ({ user }) => {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const userInfo = user.prefix + ' ' + user.name + ' ' + user.lastName;
 
   return (
@@ -19,7 +20,14 @@ const UserPreview: React.FC<userPreviewProps> = ({ user }) => {
         justifyContent='center'
         alignItems='center'
         sx={{ border: '1px solid black', cursor: 'pointer' }}
-        onClick={() => navigate(`user/${user.id}`,{state: [userInfo]})}
+        onClick={() =>
+          navigate(`/user/${user.id}`, {
+            state: state
+              ? [...state, { id: user.id, userInfo }]
+              : [{ id: user.id, userInfo }],
+            replace: true,
+          })
+        }
       >
         <CardMedia component='img' image={user.imageUrl} />
         <Typography

@@ -1,6 +1,6 @@
 import { CardMedia, Grid, Typography, Box } from '@mui/material';
 import { UserProfileType } from '../../../Types';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -19,13 +19,9 @@ const baseData = {
   company: { name: '', suffix: '' },
   address: { zipCode: '', city: '', streetAddress: '', country: '', state: '' },
 };
-const ExampleGrid: React.FC = () => {
+const UserProfile: React.FC = () => {
   const [data, setData] = useState<UserProfileType>(baseData);
-
   const location = useLocation();
-  //   id
-  console.log(location.pathname.split('/')[2]);
-  console.log(location.state);
 
   useEffect(() => {
     axios
@@ -34,7 +30,18 @@ const ExampleGrid: React.FC = () => {
       )
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [location.pathname]);
+
+  const locationHistory =
+    location.state &&
+    location.state.map((item: any, index: number) => (
+      <Box key={index}>
+        <Link to={'/user/:' + item.id} replace={true}>
+          {item.userInfo}
+        </Link>
+        {index < location.state.length - 1 && ' > '}
+      </Box>
+    ));
 
   return (
     <>
@@ -80,10 +87,11 @@ const ExampleGrid: React.FC = () => {
               <Typography>State: {data.address.state}</Typography>
             </Box>
           </Grid>
+          {locationHistory}
         </Grid>
       )}
     </>
   );
 };
 
-export default ExampleGrid;
+export default UserProfile;
