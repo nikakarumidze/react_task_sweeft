@@ -12,6 +12,13 @@ const UserPreview: React.FC<userPreviewProps> = ({ user }) => {
   const { state } = useLocation();
   const userInfo = user.prefix + ' ' + user.name + ' ' + user.lastName;
 
+  // Navigation Handler Function
+  const onNavigate = () => {
+    const userData = { id: user.id, userInfo };
+    const newState = state ? [...state, userData] : [userData];
+    navigate(`/user/${user.id}`, { state: newState, replace: true });
+  };
+
   return (
     <Grid item xs={12} sm={6} md={3}>
       <Box
@@ -20,22 +27,10 @@ const UserPreview: React.FC<userPreviewProps> = ({ user }) => {
         justifyContent='center'
         alignItems='center'
         sx={{ border: '1px solid black', cursor: 'pointer' }}
-        onClick={() =>
-          navigate(`/user/${user.id}`, {
-            state: state
-              ? [...state, { id: user.id, userInfo }]
-              : [{ id: user.id, userInfo }],
-            replace: true,
-          })
-        }
+        onClick={onNavigate}
       >
         <CardMedia component='img' image={user.imageUrl} />
-        <Typography
-          variant='h6'
-          component='h3'
-          gutterBottom
-          sx={{ fontWeight: 'bold' }}
-        >
+        <Typography variant='h6' component='h3' gutterBottom fontWeight='bold'>
           {userInfo}
         </Typography>
         <Typography component='h2' mb='16px'>

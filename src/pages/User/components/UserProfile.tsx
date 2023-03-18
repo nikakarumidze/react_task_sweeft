@@ -36,7 +36,7 @@ const UserProfile: React.FC = () => {
     location.state &&
     location.state.map((item: any, index: number) => (
       <Box key={index}>
-        <Link to={'/user/:' + item.id} replace={true}>
+        <Link to={'/user/' + item.id} replace={true}>
           {item.userInfo}
         </Link>
         {index < location.state.length - 1 && ' > '}
